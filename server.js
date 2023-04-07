@@ -26,13 +26,18 @@ app.get('/notes', (client_request, server_response) => {
   });
 
 app.get('/api/notes', (client_request, server_response) => {
-    server_response.json(notes);
+  fs.readFile(path.join(__dirname, "./db/db.json"), "utf-8", (err, data) => {
+    if (err) {
+      return res.status(400).json({ err });
+    }
+    server_response.json(JSON.parse(data));
+  })
   });
 
 app.post('/api/notes', (client_request, server_response) => {
 
     const { title, text } = client_request.body
-
+    if ( title && text) {
     
     const newNote = {
       title,
@@ -54,9 +59,11 @@ app.post('/api/notes', (client_request, server_response) => {
              )
              
       );
-      
+      // server_response.sendFile(path.join(process.cwd(), 'public/notes.html'));
+      server_response.json(notes)
       });
-    server_response.end()
+      
+    }
     })
     
 app.listen(PORT, () => console.log('Listening on port %s', PORT));
