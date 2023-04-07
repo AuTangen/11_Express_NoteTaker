@@ -32,6 +32,8 @@ app.get('/api/notes', (client_request, server_response) => {
 app.post('/api/notes', (client_request, server_response) => {
 
     const { title, text } = client_request.body
+
+    
     const newNote = {
       title,
       text,
@@ -54,7 +56,7 @@ app.post('/api/notes', (client_request, server_response) => {
       );
       
       });
-    server_response.json('I cant get this to update the list until after server restart')
+    server_response.end()
     })
     
 app.listen(PORT, () => console.log('Listening on port %s', PORT));
