@@ -1,7 +1,8 @@
 const express = require('express');
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const path = require('path')
 const fs = require('fs');
+
 // const api_routes = require('./routes/api_routes.js');
 const notes = require('./db/db.json')
 const uuid = require('./helpers/uuid');
@@ -36,7 +37,7 @@ app.post('/api/notes', (client_request, server_response) => {
       text,
       id: uuid()
     }
-    console.log(newNote)
+    // console.log(newNote)
    
       fs.readFile('db/db.json', 'utf-8', (err, data) => {
         if(err) throw err;
@@ -49,9 +50,11 @@ app.post('/api/notes', (client_request, server_response) => {
             : console.log(
                 `${newNote.title} has been written to JSON file`
              )
+             
       );
+      
       });
-      server_response.sendFile(path.join(process.cwd(), 'public/notes.html'))
+    server_response.json('I cant get this to update the list until after server restart')
     })
-
+    
 app.listen(PORT, () => console.log('Listening on port %s', PORT));
