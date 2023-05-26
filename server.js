@@ -2,6 +2,11 @@ const express = require('express');
 const PORT = process.env.PORT || 3000;
 const path = require('path')
 const fs = require('fs');
+const {
+  readFromFile,
+  readAndAppend,
+  writeToFile,
+} = require('./helpers/fsUtils');
 
 // const api_routes = require('./routes/api_routes.js');
 const notes = require('./db/db.json')
@@ -14,6 +19,22 @@ app.use(express.static('public'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.delete('/api/notes/:id', (req, res) => {
+  const noteID = req.params.id;
+  readFromFile('./db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      // Make a new array of all tips except the one with the ID provided in the URL
+      const result = json.filter((note) => note.id !== noteID);
+
+      // Save that array to the filesystem
+      writeToFile('./db/db.json', result);
+
+      // Respond to the DELETE request
+      res.json(`Item ${noteID} has been deleted 🗑️`);
+    });
+});
 
 
 app.get('/', (client_request, server_response) => {
@@ -65,5 +86,6 @@ app.post('/api/notes', (client_request, server_response) => {
       
     }
     })
+   
     
 app.listen(PORT, () => console.log('Listening on port %s', PORT));
